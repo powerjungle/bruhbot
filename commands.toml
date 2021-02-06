@@ -1,0 +1,60 @@
+command_char = "~"
+
+[command.ping]
+extra = ["pg"]
+method = "pingme()"
+help_txt = """\
+just 'ping' to see if the bot is online \
+or 'ping host.name' or 'ping host.name:port' \
+(example: ~ping google.com:443) to see if a random host is online; checkout also ~help pp\
+"""
+
+[command.pports]
+extra = ["pp"]
+method = "ping_ports()"
+help_txt = "checkout names (instead of numbers) of ports for ping"
+
+[command.help]
+extra = ["helpme"]
+method = "help_method()"
+help_txt = "helpception"
+
+[command.target_sleeps]
+extra = ["sleeps"]
+method = "target_sleeps()"
+help_txt = "is the target asleep"
+
+[command.ideas]
+extra = ["ias"]
+method = "ideas()"
+help_txt ="random written ideas, can be deleted by the author, max 5 ideas per username"
+
+[command.add_idea]
+extra = ["aia"]
+method = "add_idea()"
+help_txt = """\
+for new idea '~aia title', max: 13 symbols, it will only \
+add a title, '~aia title-description', max: 66 simvola will add a \
+description to the title, but the title must already exist\
+"""
+
+[command.remove_idea]
+extra = ["ri"]
+method = "remove_idea()"
+help_txt = "remove a whole idea (including the description), only for your ideas"
+
+[command.alcohol]
+extra = ["alc"]
+method = "alcohol()"
+help_txt = """\
+~alcohol 200ml 40% 5%=/unitst/mlt %=(target percent), \
+unitst(target units), etc.; also checkout and ~mixalcohol\
+"""
+
+[command.mixalcohol]
+extra = ["mixalc"]
+method = "mixalcohol()"
+help_txt = "prints information about mixing and diluting liquids"
+
+[regex.69]
+method = "regex_sixnine()"

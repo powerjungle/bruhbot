@@ -1,0 +1,6 @@
+.idea/
+ideas_store.toml
+bot-config.toml
+ping_config.toml
+local-commands.toml
+sleeper_table.toml
