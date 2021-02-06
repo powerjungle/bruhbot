@@ -160,7 +160,6 @@ class MyOwnBot(pydle.Client):
 
     async def help_method(self, target, argument):
         for_help_format = ""
-        parsed_commands = toml.load("commands.toml")
 
         for item in parsed_commands.get("command"):
             values = parsed_commands["command"].get(item)
