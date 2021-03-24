@@ -57,4 +57,9 @@ method = "mixalcohol()"
 help_txt = "prints information about mixing and diluting liquids"
 
 [regex.69]
+string = '''\s69\s'''
+method = "regex_sixnine()"
+
+[regex.692]
+string = '''^69$'''
 method = "regex_sixnine()"

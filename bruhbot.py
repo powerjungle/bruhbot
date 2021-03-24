@@ -34,8 +34,9 @@ logging.basicConfig(level=logging.INFO)
 
 
 async def check_regex_true(string, message):
+    re_compile = re.compile(r'' + string)
     try:
-        regex = re.search(r'' + string, message)
+        regex = re.search(re_compile, message)
     except TypeError as e:
         logging.error(e)
         return False
@@ -185,22 +186,22 @@ class MyOwnBot(pydle.Client):
             if len(get_port) == 2:
                 hostname = get_port[0]
                 argument_port = get_port[1]
-                port = argument_port
-                if not port.isdigit():
+                got_port = argument_port
+                if not got_port.isdigit():
                     try:
                         ping_config = toml.load("ping_config.toml")
                     except FileNotFoundError:
                         await self.message(target, "no pings configured")
                     else:
                         try:
-                            port = ping_config["port"].get(port).get("number")
+                            got_port = ping_config["port"].get(got_port).get("number")
                         except AttributeError:
-                            await self.message(target, f"unknown port: {port}")
+                            await self.message(target, f"unknown port: {got_port}")
                             return
             elif len(get_port) == 1:
                 hostname = get_port[0]
                 argument_port = 80
-                port = argument_port
+                got_port = argument_port
             else:
                 return
 
@@ -232,7 +233,7 @@ class MyOwnBot(pydle.Client):
                 return
 
             try:
-                s = socket.create_connection(address=(got_host, port), timeout=3)
+                s = socket.create_connection(address=(got_host, got_port), timeout=3)
             except OSError:
                 await self.message(target, f"{print_hostname} DOWN")
             else:
@@ -297,7 +298,9 @@ class MyOwnBot(pydle.Client):
 
         for usernames in parsed_toml[global_toml]:
             if parsed_toml[global_toml][usernames].get(key) is not None:
-                logging.info(f"parsed_toml[{global_toml}][{usernames}].get({key}):{parsed_toml[global_toml][usernames].get(key)}")
+                logging.info(
+                    f"parsed_toml[{global_toml}][{usernames}].get({key}):{parsed_toml[global_toml][usernames].get(key)}"
+                )
                 await self.message(target, message)
                 return False
 
@@ -480,7 +483,8 @@ class MyOwnBot(pydle.Client):
                         break
                 if got_idea_detail is not None:
                     if got_idea_detail != '':
-                        await self.message(target, f"idea: {arg_argument}; by: <{got_idea_username}>: {got_idea_detail}")
+                        await self.message(target,
+                                           f"idea: {arg_argument}; by: <{got_idea_username}>: {got_idea_detail}")
                     else:
                         await self.message(target, f"empty idea, use '~aia {arg_argument}-description'"
                                                    f" if you have written the title")
@@ -560,19 +564,19 @@ class MyOwnBot(pydle.Client):
             arg_target_percent = got_result[2]
             arg_unit_target = got_result[3]
             arg_target_ml = got_result[4]
-            final_result = round((arg_ml * (arg_percent/100))/10, 2)
+            final_result = round((arg_ml * (arg_percent / 100)) / 10, 2)
 
             if arg_unit_target != 0:
-                final_target_units_ml = int((arg_unit_target*10)/(arg_percent/100))
+                final_target_units_ml = int((arg_unit_target * 10) / (arg_percent / 100))
                 final_remove_amount = arg_ml - final_target_units_ml
                 extra_info += f"; for {arg_unit_target} units (UK), " \
                               f"it must become {final_target_units_ml}ml at {arg_percent}% " \
                               f"or must remove {final_remove_amount}ml from the total amount"
             elif arg_target_percent != 0:
-                final_target_percent = int((arg_percent/arg_target_percent)*arg_ml-arg_ml)
+                final_target_percent = int((arg_percent / arg_target_percent) * arg_ml - arg_ml)
                 final_target_percent_all = int(final_target_percent + arg_ml)
                 extra_info += f"; add: {final_target_percent}ml water " \
-                             f"(total {final_target_percent_all}ml) for {arg_target_percent}%"
+                              f"(total {final_target_percent_all}ml) for {arg_target_percent}%"
             elif arg_target_ml != 0:
                 final_target_ml_water = int((arg_ml / arg_target_ml) * arg_percent)
                 final_target_ml_same = round((arg_target_ml * (arg_percent / 100)) / 10, 2)
@@ -713,9 +717,10 @@ class MyOwnBot(pydle.Client):
 
             regex_result = dict()
 
-            for rx in parsed_commands.get("regex"):
-                if await check_regex_true(rx, message) is True:
-                    regex_result[rx] = True
+            for reg_names in parsed_commands["regex"]:
+                rx_string = parsed_commands["regex"][reg_names]["string"]
+                if await check_regex_true(string=rx_string, message=message) is True:
+                    regex_result[reg_names] = True
 
             logging.info(f"regex_result: {regex_result}")
 
