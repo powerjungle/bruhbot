@@ -457,6 +457,9 @@ class MyOwnBot(pydle.Client):
         await self.message(target, "nice")
 
     async def on_message(self, target, source, message):
+        if not message.startswith(comm_char):
+            return
+
         logging.info(f"source: {source}")
         logging.info(f"message: {message}")
 
