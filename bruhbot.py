@@ -473,9 +473,6 @@ class MyOwnBot(pydle.Client):
         if regex is True:
             message = message.replace(self.got_regex, '')
 
-        if not message.startswith(comm_char):
-            return
-
         get_sleeper_result = await get_sleeper_table(self, target, got_username)
         if get_sleeper_result is False:
             return
@@ -485,6 +482,8 @@ class MyOwnBot(pydle.Client):
             return
 
         regex_result = await find_regex_msg(parsed_commands, message)
+        if not message.startswith(comm_char) and bool(regex_result) is False:
+            return
 
         # logging.info(f"regex_result: {regex_result}")
 
@@ -507,14 +506,14 @@ class MyOwnBot(pydle.Client):
         if detect_help_result is not False:
             return
 
-        values = await find_command(parsed_commands, got_item)
+        values = await find_command(parsed_commands, got_item, regex_result)
         if values is False:
             await self.message(target, f"there's no such command: {got_item}")
             return
 
-        method = values.get("method")
-
-        await getattr(self, str(method))(target, f"{got_username}:{whole_message}")
+        if bool(regex_result) is False:
+            method = values.get("method")
+            await getattr(self, str(method))(target, f"{got_username}:{whole_message}")
 
         for rx in regex_result:
             method = parsed_commands["regex"].get(rx).get("method")

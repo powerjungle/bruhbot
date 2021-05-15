@@ -123,7 +123,10 @@ async def check_regex_username(bot, message):
         return False
 
 
-async def find_command(parsed_commands, got_item):
+async def find_command(parsed_commands, got_item, regex_result):
+    if bool(regex_result) is True:
+        return True
+
     values = parsed_commands["command"].get(got_item)
     if values is None:
         for items in parsed_commands["command"]:
