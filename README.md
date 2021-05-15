@@ -44,3 +44,9 @@ number = 443
 ```
 
 add whatever port names and numbers you wish to. The numbers of the ports won't be printed when calling the command.
+
+If you get the error:
+
+`SASL credentials set but puresasl module not found: not initiating SASL authentication.`
+
+Install the `pure-sasl` module manually using pip.

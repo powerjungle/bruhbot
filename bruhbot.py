@@ -1,7 +1,7 @@
 import pydle
-import toml
-import re
-import datetime
+from toml import load, dump
+from re import compile
+from datetime import datetime, timedelta
 import logging
 from ast import literal_eval
 
@@ -12,7 +12,7 @@ from bruhbot_alcohol_methods import alcohol_command_chars, alcohol_char_limits, 
 from bruhbot_on_message_detection import get_sleeper_table, spam_ban, spam_wait, \
     recheck_banned_user, detect_help, check_message_config, check_regex_username, find_command, find_regex_msg
 
-parsed_toml_global = toml.load("bot-config.toml")
+parsed_toml_global = load("bot-config.toml")
 bot_name = parsed_toml_global["bot_name"]
 tls = parsed_toml_global["tls"]
 tls_verify = parsed_toml_global["tls_verify"]
@@ -22,9 +22,9 @@ port = int(parsed_toml_global["port"])
 sasl_identify = parsed_toml_global["sasl_identify"]
 
 try:
-    parsed_commands = toml.load("local-commands.toml")
+    parsed_commands = load("local-commands.toml")
 except FileNotFoundError:
-    parsed_commands = toml.load("commands.toml")
+    parsed_commands = load("commands.toml")
 
 comm_char = parsed_commands["command_char"]
 
@@ -41,7 +41,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 async def append_to_toml(file, key, value, global_value, global_subvalue, just_change=False):
-    reload_whole_toml = toml.load(file)
+    reload_whole_toml = load(file)
 
     global_stuff = reload_whole_toml[global_value][global_subvalue]
 
@@ -53,21 +53,21 @@ async def append_to_toml(file, key, value, global_value, global_subvalue, just_c
     if if_state:
         global_stuff[key] = value
         with open(file, 'w') as f:
-            toml.dump(reload_whole_toml, f)
+            dump(reload_whole_toml, f)
         return True
     else:
         return False
 
 
 async def remove_from_toml(file, key, global_value, global_subvalue):
-    reload_whole_toml = toml.load(file)
+    reload_whole_toml = load(file)
 
     global_stuff = reload_whole_toml[global_value][global_subvalue]
 
     if key in global_stuff:
         global_stuff.pop(key)
         with open(file, 'w') as f:
-            toml.dump(reload_whole_toml, f)
+            dump(reload_whole_toml, f)
         return True
     else:
         return False
@@ -81,7 +81,7 @@ class MyOwnBot(pydle.Client):
     got_regex = None
     only_bridge = None
     debug = None
-    re_pattern = re.compile(r'')
+    re_pattern = compile(r'')
     target_sleeper = None
     all_hours = None
 
@@ -107,14 +107,14 @@ class MyOwnBot(pydle.Client):
     description_limit = 150
 
     async def on_connect(self):
-        parsed_toml = toml.load("bot-config.toml")
+        parsed_toml = load("bot-config.toml")
         self.use_regex = parsed_toml["use_bridge_regex"]
         if literal_eval(str(self.use_regex)) is True:
             self.bridge_regex = parsed_toml["bridge_regex"]
             self.bridge_bot_name = parsed_toml["bridge_bot_name"]
             self.only_bridge = parsed_toml["only_bridge"]
             self.debug = parsed_toml["debug"]
-            self.re_pattern = re.compile(r'' + self.bridge_regex)
+            self.re_pattern = compile(r'' + self.bridge_regex)
 
         channel = parsed_toml["channel"]
         await self.join(channel)
@@ -124,7 +124,7 @@ class MyOwnBot(pydle.Client):
 
         values = False
         if argument != "help":
-            values = await find_command(parsed_commands, argument)
+            values = await find_command(parsed_commands, argument, False)
         if values is False:
             for items in parsed_commands["command"]:
                 ext_str = ''
@@ -155,7 +155,7 @@ class MyOwnBot(pydle.Client):
             got_port = argument_port
             if not got_port.isdigit():
                 try:
-                    ping_config = toml.load("ping_config.toml")
+                    ping_config = load("ping_config.toml")
                     try:
                         got_port = ping_config["port"].get(got_port).get("number")
                     except AttributeError:
@@ -186,7 +186,7 @@ class MyOwnBot(pydle.Client):
 
     async def ping_ports(self, target, argument=None):
         format_string = ''
-        ping_config = toml.load("ping_config.toml")
+        ping_config = load("ping_config.toml")
         for name in ping_config["port"]:
             format_string += f"{name}, "
         await self.message(target, format_string)
@@ -220,7 +220,7 @@ class MyOwnBot(pydle.Client):
         max_entr_msg = f"{arg_username}{self.max_entr_msg}{str(self.ideas_toml_limit)} ideas"
         duplicates_message = f"{argument} already exists"
 
-        ideas_file_toml = toml.load(self.ideas_file_name)
+        ideas_file_toml = load(self.ideas_file_name)
 
         toml_file_exists_result = await toml_file_exists(self, self.ideas_file_name, target)
         if toml_file_exists_result is False:
@@ -404,7 +404,7 @@ class MyOwnBot(pydle.Client):
         await self.message(target, f"for {arg_ml}ml {arg_percent}%: {final_result} units (UK){extra_info}")
 
     async def target_sleeps(self, target, argument=None):
-        now = datetime.datetime.now()
+        now = datetime.now()
         extra_msg = ''
 
         got_percent = self.all_hours[str(now.hour)].get("percent")
@@ -430,13 +430,13 @@ class MyOwnBot(pydle.Client):
         if self.detected_sleeper is not None:
             sleeper_detect_diff = now - self.detected_sleeper
         else:
-            sleeper_detect_diff = datetime.timedelta(hours=12)
+            sleeper_detect_diff = timedelta(hours=12)
 
         calc_time = 120 - ((int(final_percent) / 100) * 120)
         wait_time = round(calc_time)
         logging.info(f"Final percent: {final_percent} Wait time: {wait_time}")
 
-        if sleeper_detect_diff <= datetime.timedelta(minutes=wait_time) and final_percent != 1.0:
+        if sleeper_detect_diff <= timedelta(minutes=wait_time) and final_percent != 1.0:
             calc_percent_of = (sleeper_detect_diff.seconds / 60) / wait_time
             logging.info(f"calc_percent_of:{calc_percent_of}")
             final_percent = final_percent * calc_percent_of
