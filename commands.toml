@@ -2,7 +2,7 @@ command_char = "~"
 
 [command.ping]
 extra = ["pg"]
-method = "pingme()"
+method = "ping_me"
 help_txt = """\
 just 'ping' to see if the bot is online \
 or 'ping host.name' or 'ping host.name:port' \
@@ -11,27 +11,27 @@ or 'ping host.name' or 'ping host.name:port' \
 
 [command.pports]
 extra = ["pp"]
-method = "ping_ports()"
+method = "ping_ports"
 help_txt = "checkout names (instead of numbers) of ports for ping"
 
 [command.help]
 extra = ["helpme"]
-method = "help_method()"
+method = "help_method"
 help_txt = "helpception"
 
 [command.target_sleeps]
 extra = ["sleeps"]
-method = "target_sleeps()"
+method = "target_sleeps"
 help_txt = "is the target asleep"
 
 [command.ideas]
 extra = ["ias"]
-method = "ideas()"
-help_txt ="random written ideas, can be deleted by the author, max 5 ideas per username"
+method = "ideas"
+help_txt = "random written ideas, can be deleted by the author, max 5 ideas per username"
 
 [command.add_idea]
 extra = ["aia"]
-method = "add_idea()"
+method = "add_idea"
 help_txt = """\
 for new idea '~aia title', max: 13 symbols, it will only \
 add a title, '~aia title-description', max: 66 simvola will add a \
@@ -40,26 +40,25 @@ description to the title, but the title must already exist\
 
 [command.remove_idea]
 extra = ["ri"]
-method = "remove_idea()"
+method = "remove_idea"
 help_txt = "remove a whole idea (including the description), only for your ideas"
 
 [command.alcohol]
 extra = ["alc"]
-method = "alcohol()"
+method = "alcohol"
 help_txt = """\
-~alcohol 200ml 40% 5%=/unitst/mlt %=(target percent), \
-unitst(target units), etc.; also checkout and ~mixalcohol\
+~alcohol 200ml 40% 5perct/unitst/milit, also checkout and ~mix_alcohol\
 """
 
-[command.mixalcohol]
+[command.mix_alcohol]
 extra = ["mixalc"]
-method = "mixalcohol()"
+method = "mix_alcohol"
 help_txt = "prints information about mixing and diluting liquids"
 
 [regex.69]
 string = '''\s69\s'''
-method = "regex_sixnine()"
+method = "regex_six_nine"
 
 [regex.692]
 string = '''^69$'''
-method = "regex_sixnine()"
+method = "regex_six_nine"

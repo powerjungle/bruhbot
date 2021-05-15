@@ -4,3 +4,4 @@ bot-config.toml
 ping_config.toml
 local-commands.toml
 sleeper_table.toml
+__pycache__/

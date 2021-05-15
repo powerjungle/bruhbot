@@ -27,13 +27,13 @@ sasl_mechanism="PLAIN"
 ```
 
 It's a good idea to make a second commands file called "local-commands.toml" 
-if you wanna customize your commands, so that you don't accidentally commit the changes. 
+if you want to customize your commands, so that you don't accidentally commit the changes. 
 If the file doesn't exist, the script will use the main one. If you want to make a fork 
 of this project and customize, then use the main commands file.
 
 Info for regex: https://docs.python.org/3/library/re.html
 
-For the pports command you can create a config file "ping_config.toml":
+For the ~pports command you can create a config file "ping_config.toml" like so:
 
 ```toml
 [port.http]
@@ -43,4 +43,4 @@ number = 80
 number = 443
 ```
 
-add whatever port names and numbers you wish to.
+add whatever port names and numbers you wish to. The numbers of the ports won't be printed when calling the command.
