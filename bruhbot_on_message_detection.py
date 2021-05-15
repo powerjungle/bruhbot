@@ -115,7 +115,6 @@ async def check_regex_username(bot, message):
     try:
         regex = bot.re_pattern.search(message)
         if regex:
-            # logging.info("regex found pattern")
             bot.got_username = regex.group(1)
             bot.got_regex = regex.group(0)
             return True

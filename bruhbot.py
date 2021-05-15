@@ -457,9 +457,6 @@ class MyOwnBot(pydle.Client):
         await self.message(target, "nice")
 
     async def on_message(self, target, source, message):
-        if not message.startswith(comm_char):
-            return
-
         logging.info(f"source: {source}")
         logging.info(f"message: {message}")
 
@@ -473,13 +470,11 @@ class MyOwnBot(pydle.Client):
         if regex is True:
             got_username = self.got_username
 
-        if literal_eval(str(self.debug)) is False and message.startswith(str(self.got_regex)) and \
-                source != self.bridge_bot_name:
-            logging.warning(f"{source} is attempting to use the bridge pattern: {message}")
-            return
-
         if regex is True:
             message = message.replace(self.got_regex, '')
+
+        if not message.startswith(comm_char):
+            return
 
         get_sleeper_result = await get_sleeper_table(self, target, got_username)
         if get_sleeper_result is False:
