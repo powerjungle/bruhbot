@@ -8,9 +8,12 @@ async def alcohol_command_chars(split_arg, command_symbols):
         for cs in command_symbols:
             split_arg = arg.split(cs, maxsplit=1)
             if len(split_arg) > 1:
-                split_arg = list(filter(None, split_arg))
-                split_arg = split_arg[0]
-                command_data[cs] = split_arg
+                try:
+                    split_arg = list(filter(None, split_arg))
+                    split_arg = split_arg[0]
+                    command_data[cs] = split_arg
+                except (IndexError, KeyError, AttributeError):
+                    return False
 
     return command_data
 

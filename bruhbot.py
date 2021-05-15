@@ -345,6 +345,8 @@ class MyOwnBot(pydle.Client):
         command_symbols = ["ml", "%", "perct", "unitst", "milit"]
 
         command_data = await alcohol_command_chars(split_arg, command_symbols)
+        if command_data is False:
+            return
 
         char_limit_result = await alcohol_char_limits(command_symbols, command_data, target, self)
         if char_limit_result is True:
