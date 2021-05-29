@@ -4,6 +4,8 @@ from re import compile
 from datetime import datetime, timedelta
 import logging
 from ast import literal_eval
+from signal import signal, SIGINT
+from asyncio import ensure_future
 
 from bruhbot_ping_methods import ping_filtered, connection_to_host
 from bruhbot_toml_checks import toml_file_exists, check_user_allowed_toml, \
@@ -528,6 +530,14 @@ client = MyOwnBot(nickname=bot_name,
                   sasl_username=sasl_username,
                   sasl_password=sasl_password,
                   sasl_mechanism=sasl_mechanism)
+
+
+def handle_interrupt(sig, frame):
+    ensure_future(client.quit())
+    logging.warning("Bot has quit")
+
+
+signal(SIGINT, handle_interrupt)
 client.RECONNECT_MAX_ATTEMPTS = 6
 client.run(hostname=host, port=port, tls=literal_eval(str(tls)),
            tls_verify=literal_eval(str(tls_verify)), password=password)
