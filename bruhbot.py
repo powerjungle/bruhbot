@@ -130,7 +130,7 @@ class MyOwnBot(pydle.Client):
                 ext_str = ''
                 for xtr in parsed_commands["command"].get(items).get("extra"):
                     ext_str += f" / {xtr}"
-                for_help_format += f" || {items}"
+                for_help_format += f" // {items}"
                 for_help_format += ext_str
         else:
             got_help = values.get("help_txt")
