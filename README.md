@@ -24,6 +24,7 @@ sasl_identify=false # if the bot is registered (you also need to install the pur
 sasl_username="bruhbot"
 sasl_password="blahblah"
 sasl_mechanism="PLAIN"
+quit_message="Quitting"
 ```
 
 It's a good idea to make a second commands file called "local-commands.toml" 

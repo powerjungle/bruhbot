@@ -22,6 +22,7 @@ password = parsed_toml_global["password"]
 host = parsed_toml_global["host"]
 port = int(parsed_toml_global["port"])
 sasl_identify = parsed_toml_global["sasl_identify"]
+quit_msg = parsed_toml_global["quit_message"]
 
 try:
     parsed_commands = load("local-commands.toml")
@@ -533,7 +534,7 @@ client = MyOwnBot(nickname=bot_name,
 
 
 def handle_interrupt(sig, frame):
-    ensure_future(client.quit())
+    ensure_future(client.quit(quit_msg))
     logging.warning("Bot has quit")
 
 
