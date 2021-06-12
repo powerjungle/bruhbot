@@ -122,6 +122,7 @@ class MyOwnBot(pydle.Client):
         channel = parsed_toml["channel"]
         await self.join(channel)
 
+    # Return a help message for the commands of the bot
     async def help_method(self, target, argument):
         for_help_format = ""
 
@@ -141,6 +142,7 @@ class MyOwnBot(pydle.Client):
 
         await self.message(target, for_help_format)
 
+    # Ping a set IP/domain or the bot itself
     async def ping_me(self, target, argument):
         get_port = argument.split(':', maxsplit=1)
         get_port.pop(0)
@@ -187,6 +189,7 @@ class MyOwnBot(pydle.Client):
         if conn_to_host_result is False:
             return
 
+    # Return port names which can be used for pinging stuff (could be custom)
     async def ping_ports(self, target, argument=None):
         format_string = ''
         ping_config = load("ping_config.toml")
@@ -295,6 +298,7 @@ class MyOwnBot(pydle.Client):
                 format_message = format_message[:len(format_message) - 2]
         return format_message
 
+    # Print all stored ideas, to make a new idea checkout add_idea() method
     async def ideas(self, target, argument):
         split_arg = argument.split(':', maxsplit=1)
         arg_argument = split_arg[1]
@@ -336,6 +340,7 @@ class MyOwnBot(pydle.Client):
         await self.message(target,
                            f"idea: {second_split[1]}; by: <{got_idea_username}>: {got_idea_detail}")
 
+    # Alcohol calculations for units, milliliters and percentage
     async def alcohol(self, target, argument):
         split_arg = argument.split(' ', maxsplit=3)
         if argument is None or len(split_arg) < 2:
@@ -345,6 +350,8 @@ class MyOwnBot(pydle.Client):
         split_arg[0] = split_arg[0].split(':', maxsplit=1)[1]
         split_arg[0] = split_arg[0][1:]
 
+        # perct = percentage target; unitst = units target; milit = milliliters target
+        # See bellow for meaning of "target"
         command_symbols = ["ml", "%", "perct", "unitst", "milit"]
 
         command_data = await alcohol_command_chars(split_arg, command_symbols)
@@ -373,20 +380,24 @@ class MyOwnBot(pydle.Client):
         arg_target_percent = command_data[command_symbols[2]]
         arg_unit_target = command_data[command_symbols[3]]
         arg_target_ml = command_data[command_symbols[4]]
+
+        # Calculate units from input ml and percent
         final_result = round((arg_ml * (arg_percent / 100)) / 10, 2)
 
-        if arg_unit_target != 0:
+        # "target" bellow means, how much of anything needs to be added
+        # or removed to achieve the "target" value set for something
+        if arg_unit_target != 0:  # Calculate target units
             final_target_units_ml = int((arg_unit_target * 10) / (arg_percent / 100))
             final_remove_amount = arg_ml - final_target_units_ml
             extra_info += f"; for {arg_unit_target} units (UK), " \
                           f"it must become {final_target_units_ml}ml at {arg_percent}% " \
                           f"or must remove {final_remove_amount}ml from the total amount"
-        elif arg_target_percent != 0:
+        elif arg_target_percent != 0:  # Calculate target percentage
             final_target_percent = int((arg_percent / arg_target_percent) * arg_ml - arg_ml)
             final_target_percent_all = int(final_target_percent + arg_ml)
             extra_info += f"; add: {final_target_percent}ml water " \
                           f"(total {final_target_percent_all}ml) for {arg_target_percent}%"
-        elif arg_target_ml != 0:
+        elif arg_target_ml != 0:  # Calculate target milliliters
             final_target_ml_water = int((arg_ml / arg_target_ml) * arg_percent)
             final_target_ml_same = round((arg_target_ml * (arg_percent / 100)) / 10, 2)
             if arg_target_ml > arg_ml:
@@ -406,6 +417,7 @@ class MyOwnBot(pydle.Client):
 
         await self.message(target, f"for {arg_ml}ml {arg_percent}%: {final_result} units (UK){extra_info}")
 
+    # Check if somebody sleeps according to a predefined table
     async def target_sleeps(self, target, argument=None):
         now = datetime.now()
         extra_msg = ''
@@ -458,6 +470,8 @@ class MyOwnBot(pydle.Client):
                                    "links: https://imgur.com/a/vzaiwSN (layering demo) ; "
                                    "https://www.goodcocktails.com/bartending/specific_gravity.php (specific gravity)")
 
+    # Message to return if 69 is found in another message via regex
+    # The regex itself is in the commands config file
     async def regex_six_nine(self, target):
         await self.message(target, "nice")
 
